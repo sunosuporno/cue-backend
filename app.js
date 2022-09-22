@@ -6,16 +6,14 @@ const fetch = require("node-fetch");
 const abi = require("./abi.json");
 const converter = require("hex2dec");
 const PORT = process.env.PORT || 3000;
-
+const alchemyMumbai = process.env.ALCHEMY_MUMBAI;
 const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const Web3 = require("web3");
 
-const web3 = new Web3(
-  "wss://polygon-mumbai.g.alchemy.com/v2/r_XZOrqu4wHfr7SBZGhjr1s2zBwa6xOS"
-);
+const web3 = new Web3("wss://polygon-mumbai.g.alchemy.com/v2/" + alchemyMumbai);
 
 console.log("Web3 is connected: ", web3.version);
 

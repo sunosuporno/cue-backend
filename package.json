@@ -1,0 +1,19 @@
+{
+  "name": "b2bbackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "hex2dec": "^1.1.2",
+    "node-fetch": "^2.6.7",
+    "web3": "^1.8.0"
+  }
+}

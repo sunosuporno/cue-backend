@@ -20,6 +20,7 @@ const client = new MongoClient(uri, {
 });
 
 const Web3 = require("web3");
+const e = require("express");
 
 const web3 = new Web3("wss://polygon-mumbai.g.alchemy.com/v2/" + alchemyMumbai);
 
@@ -45,7 +46,11 @@ app.get("/user/:address", async (req, res) => {
     await client.connect();
     const collection = client.db("Users").collection("userData");
     const user = await collection.findOne({ walletAddress: walletAddress });
-    res.status(200).send(user);
+    if (user) {
+      res.status(200).send(user);
+    } else {
+      res.status(200).send("User not found");
+    }
   } catch (err) {
     console.log(err);
   } finally {

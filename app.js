@@ -12,6 +12,7 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 const uri = process.env.MONGO_URI;
+const courierKey = process.env.COURIER_API_KEY;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -85,8 +86,39 @@ const sendNotif = async (walletAddress, notifId) => {
     console.log(wallet);
     const user = await collection.findOne({ walletAddress: wallet });
     userEmail = user.email;
+    const tablelandUrl = `https://testnet.tableland.network/query?mode=json&s=select%20*%20from%20notif_table_80001_2728%20where%20notif_name%20=%20%27${notifId}%27`;
+    const res = await fetch(tablelandUrl);
+    const data = await res.json();
+    const ipfs_hash = data[0].ipfs_hash;
+    const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfs_hash}`;
+    const ipfsResponse = await fetch(ipfsUrl);
+    const ipfsData = await ipfsResponse.json();
+    console.log(ipfsData);
+    const options = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + courierKey,
+      },
+      body: JSON.stringify({
+        message: {
+          template: "4HNG8QHVCF4MZHGEQS0EF6CJ17EP",
+          data: {
+            notification: ipfsData.message,
+            companyName: data[0].company_name,
+          },
+          to: {
+            email: userEmail,
+          },
+          brand_id: "N3CA06ENV84GRMMDWVJF3DT615E0",
+        },
+      }),
+    };
 
-    console.log(user);
+    const response = await fetch("https://api.courier.com/send", options);
+    const resdata = await response.json();
+    console.log(resdata);
   } catch (err) {
     console.log(err);
   } finally {
@@ -94,33 +126,6 @@ const sendNotif = async (walletAddress, notifId) => {
   }
 };
 
-// const decodeLogs = web3.eth.abi.decodeLog(
-//   [
-//     {
-//       type: "string",
-//       name: "Notify",
-//     },
-//     {
-//       type: "string",
-//       name: "wallet_address",
-//       indexed: true,
-//     },
-//     {
-//       type: "string",
-//       name: "notif_id",
-//       indexed: true,
-//     },
-//   ],
-//   "0x30fe45f857a9ef2c6e22b94a540dc3eefb6e8a0d9d9e8bb4dce4fc7b70c2e10c",
-//   [
-//     "0xbcc61b31df5d8e174537448a908c8b8c6003800f2e45099d43df746d7f6ad3ff",
-//     "0x6ccd092cf10acb50fdcae863c500b18fcf6750054552bd31a866915ab8f99f72",
-//   ]
-// );
-
-// console.log(decodeLogs);
-
-// const logs = web3.eth.abi.decodeLog(
-sendNotif("43690047485523017521719660013406923964685528852", "test_notif_1");
+sendNotif("43690047485523017521719660013406923964685528852", "test_notif_2");
 
 app.listen(PORT);

@@ -3,6 +3,7 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fetch = require("node-fetch");
+const abiTableland = require("./abiTableland.json");
 const abi = require("./abi.json");
 const converter = require("hex2dec");
 const PORT = process.env.PORT || 3000;
@@ -32,9 +33,30 @@ const contract = new web3.eth.Contract(
   "0x2125aF4B5a1F21Bf2f6F218384Ee89a18E30AaB6"
 );
 
+const contractTableland = new web3.eth.Contract(
+  abiTableland,
+  "0x4b48841d4b32C4650E4ABc117A03FE8B51f38F68"
+);
+
 contract.events.Notify().on("data", (event) => {
   console.log(event.returnValues);
   sendNotif(event.returnValues.wallet_address, event.returnValues.notif_id);
+});
+
+contractTableland.events.RunSQL().on("data", async (event) => {
+  console.log(event.returnValues);
+  const url =
+    "https://discord.com/api/webhooks/1038404742507941941/ql5G58gcJmZTqKS6ru5vMrRMGGIAzHygiRrhWvrkcEdIEs6AjZxsJXN6jS9MEikexhNa";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content: `A new query has been run on Tableland Network. The query is: ${event.returnValues.statement} by ${event.returnValues.caller}`,
+    }),
+  };
+  const response = await fetch(url, options);
 });
 
 app.get("/", (req, res) => {
@@ -125,7 +147,5 @@ const sendNotif = async (walletAddress, notifId) => {
     await client.close();
   }
 };
-
-sendNotif("43690047485523017521719660013406923964685528852", "test_notif_2");
 
 app.listen(PORT);

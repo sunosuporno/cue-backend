@@ -7,24 +7,29 @@
   { "inputs": [], "name": "ApprovalQueryForNonexistentToken", "type": "error" },
   { "inputs": [], "name": "ApproveToCaller", "type": "error" },
   { "inputs": [], "name": "BalanceQueryForZeroAddress", "type": "error" },
-  { "inputs": [], "name": "InvalidQueryRange", "type": "error" },
+  { "inputs": [], "name": "InsufficientAllowance", "type": "error" },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "querySize", "type": "uint256" },
-      { "internalType": "uint256", "name": "maxQuerySize", "type": "uint256" }
+      { "internalType": "uint256", "name": "price", "type": "uint256" }
     ],
-    "name": "MaxQuerySizeExceeded",
+    "name": "InsufficientValue",
     "type": "error"
   },
+  { "inputs": [], "name": "InvalidBatchPilotAction", "type": "error" },
+  { "inputs": [], "name": "InvalidPilotStatus", "type": "error" },
+  { "inputs": [], "name": "InvalidProof", "type": "error" },
+  { "inputs": [], "name": "InvalidQueryRange", "type": "error" },
   { "inputs": [], "name": "MintERC2309QuantityExceedsLimit", "type": "error" },
   { "inputs": [], "name": "MintToZeroAddress", "type": "error" },
   { "inputs": [], "name": "MintZeroQuantity", "type": "error" },
+  { "inputs": [], "name": "MintingClosed", "type": "error" },
   { "inputs": [], "name": "OwnerQueryForNonexistentToken", "type": "error" },
   {
     "inputs": [],
     "name": "OwnershipNotInitializedForExtraData",
     "type": "error"
   },
+  { "inputs": [], "name": "SoldOut", "type": "error" },
   {
     "inputs": [],
     "name": "TransferCallerNotOwnerNorApproved",
@@ -39,6 +44,7 @@
   { "inputs": [], "name": "TransferToZeroAddress", "type": "error" },
   { "inputs": [], "name": "URIQueryForNonexistentToken", "type": "error" },
   { "inputs": [], "name": "Unauthorized", "type": "error" },
+  { "inputs": [], "name": "ZeroQuantity", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
@@ -157,24 +163,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tableId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "statement",
-        "type": "string"
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
       }
     ],
-    "name": "CreateTable",
+    "name": "Initialized",
     "type": "event"
   },
   {
@@ -182,12 +176,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint8",
-        "name": "version",
+        "internalType": "enum ITablelandRigs.MintPhase",
+        "name": "mintPhase",
         "type": "uint8"
       }
     ],
-    "name": "Initialized",
+    "name": "MintPhaseChanged",
     "type": "event"
   },
   {
@@ -226,68 +220,44 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
-        "name": "caller",
+        "name": "buyer",
         "type": "address"
       },
       {
         "indexed": false,
-        "internalType": "bool",
-        "name": "isOwner",
-        "type": "bool"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
-        "name": "tableId",
+        "name": "amount",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "statement",
-        "type": "string"
-      },
-      {
-        "components": [
-          { "internalType": "bool", "name": "allowInsert", "type": "bool" },
-          { "internalType": "bool", "name": "allowUpdate", "type": "bool" },
-          { "internalType": "bool", "name": "allowDelete", "type": "bool" },
-          { "internalType": "string", "name": "whereClause", "type": "string" },
-          { "internalType": "string", "name": "withCheck", "type": "string" },
-          {
-            "internalType": "string[]",
-            "name": "updatableColumns",
-            "type": "string[]"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct ITablelandController.Policy",
-        "name": "policy",
-        "type": "tuple"
       }
     ],
-    "name": "RunSQL",
+    "name": "Refund",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "beneficiary",
+        "type": "address"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "tableId",
+        "name": "numPurchased",
         "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "controller",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
-    "name": "SetController",
+    "name": "Revenue",
     "type": "event"
   },
   {
@@ -321,31 +291,6 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tableId",
-        "type": "uint256"
-      }
-    ],
-    "name": "TransferTable",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
         "name": "account",
         "type": "address"
       }
@@ -367,6 +312,13 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "allowlistRoot",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "address", "name": "to", "type": "address" },
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
@@ -386,15 +338,19 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "string", "name": "statement", "type": "string" }
-    ],
-    "name": "createTable",
+    "inputs": [],
+    "name": "beneficiary",
     "outputs": [
-      { "internalType": "uint256", "name": "tableId", "type": "uint256" }
+      { "internalType": "address payable", "name": "", "type": "address" }
     ],
-    "stateMutability": "payable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "contractURI",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -457,17 +413,44 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "tableId", "type": "uint256" }
+    "inputs": [{ "internalType": "address", "name": "by", "type": "address" }],
+    "name": "getClaimed",
+    "outputs": [
+      { "internalType": "uint16", "name": "allowClaims", "type": "uint16" },
+      { "internalType": "uint16", "name": "waitClaims", "type": "uint16" }
     ],
-    "name": "getController",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "baseURI", "type": "string" }
+      { "internalType": "address", "name": "pilotsAddress", "type": "address" }
+    ],
+    "name": "initPilots",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_maxSupply", "type": "uint256" },
+      { "internalType": "uint256", "name": "_mintPrice", "type": "uint256" },
+      {
+        "internalType": "address payable",
+        "name": "_beneficiary",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "royaltyReceiver",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_allowlistRoot",
+        "type": "bytes32"
+      },
+      { "internalType": "bytes32", "name": "_waitlistRoot", "type": "bytes32" }
     ],
     "name": "initialize",
     "outputs": [],
@@ -485,13 +468,51 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "maxSupply",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
-      { "internalType": "address", "name": "caller", "type": "address" },
-      { "internalType": "uint256", "name": "tableId", "type": "uint256" }
+      { "internalType": "uint256", "name": "quantity", "type": "uint256" }
     ],
-    "name": "lockController",
+    "name": "mint",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "quantity", "type": "uint256" },
+      { "internalType": "uint256", "name": "freeAllowance", "type": "uint256" },
+      { "internalType": "uint256", "name": "paidAllowance", "type": "uint256" },
+      { "internalType": "bytes32[]", "name": "proof", "type": "bytes32[]" }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "mintPhase",
+    "outputs": [
+      {
+        "internalType": "enum ITablelandRigs.MintPhase",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "mintPrice",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -518,6 +539,33 @@
     "type": "function"
   },
   {
+    "inputs": [
+      { "internalType": "uint256[]", "name": "tokenIds", "type": "uint256[]" }
+    ],
+    "name": "parkRig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+    ],
+    "name": "parkRig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+    ],
+    "name": "parkRigAsOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "pause",
     "outputs": [],
@@ -528,6 +576,65 @@
     "inputs": [],
     "name": "paused",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+    ],
+    "name": "pilotInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum ITablelandRigPilots.GarageStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          { "internalType": "uint64", "name": "started", "type": "uint64" },
+          { "internalType": "bool", "name": "pilotable", "type": "bool" },
+          { "internalType": "address", "name": "addr", "type": "address" },
+          { "internalType": "uint256", "name": "id", "type": "uint256" }
+        ],
+        "internalType": "struct ITablelandRigPilots.PilotInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256[]", "name": "tokenIds", "type": "uint256[]" },
+      {
+        "internalType": "address[]",
+        "name": "pilotAddrs",
+        "type": "address[]"
+      },
+      { "internalType": "uint256[]", "name": "pilotIds", "type": "uint256[]" }
+    ],
+    "name": "pilotRig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+      { "internalType": "address", "name": "pilotAddr", "type": "address" },
+      { "internalType": "uint256", "name": "pilotId", "type": "uint256" }
+    ],
+    "name": "pilotRig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pilotSessionsTable",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -547,13 +654,15 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "caller", "type": "address" },
-      { "internalType": "uint256", "name": "tableId", "type": "uint256" },
-      { "internalType": "string", "name": "statement", "type": "string" }
+      { "internalType": "uint256", "name": "_tokenId", "type": "uint256" },
+      { "internalType": "uint256", "name": "_salePrice", "type": "uint256" }
     ],
-    "name": "runSQL",
-    "outputs": [],
-    "stateMutability": "payable",
+    "name": "royaltyInfo",
+    "outputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -591,20 +700,47 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "baseURI", "type": "string" }
+      {
+        "internalType": "address payable",
+        "name": "_beneficiary",
+        "type": "address"
+      }
     ],
-    "name": "setBaseURI",
+    "name": "setBeneficiary",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "string", "name": "uri", "type": "string" }],
+    "name": "setContractURI",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "caller", "type": "address" },
-      { "internalType": "uint256", "name": "tableId", "type": "uint256" },
-      { "internalType": "address", "name": "controller", "type": "address" }
+      { "internalType": "uint256", "name": "_mintPhase", "type": "uint256" }
     ],
-    "name": "setController",
+    "name": "setMintPhase",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "receiver", "type": "address" }
+    ],
+    "name": "setRoyaltyReceiver",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string[]", "name": "uriTemplate", "type": "string[]" }
+    ],
+    "name": "setURITemplate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -667,6 +803,24 @@
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+    ],
+    "name": "trainRig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256[]", "name": "tokenIds", "type": "uint256[]" }
+    ],
+    "name": "trainRig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "from", "type": "address" },
       { "internalType": "address", "name": "to", "type": "address" },
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
@@ -717,6 +871,13 @@
     "name": "upgradeToAndCall",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "waitlistRoot",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

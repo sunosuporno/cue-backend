@@ -84,20 +84,23 @@ contractTableland.events
     console.log(subscriptionId);
   })
   .on("data", async (event) => {
-    console.log(event.returnValues);
-    console.log(event);
-    // const url =
-    //   "https://discord.com/api/webhooks/1038404742507941941/ql5G58gcJmZTqKS6ru5vMrRMGGIAzHygiRrhWvrkcEdIEs6AjZxsJXN6jS9MEikexhNa";
-    // const options = {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     content: `A new query has been run on Tableland Network. The query is: ${event.returnValues.statement} by ${event.returnValues.caller}`,
-    //   }),
-    // };
-    // const response = await fetch(url, options);
+    console.log(event.returnValues.from);
+    console.log(event.returnValues.to);
+    const url =
+      "https://discord.com/api/webhooks/1038404742507941941/ql5G58gcJmZTqKS6ru5vMrRMGGIAzHygiRrhWvrkcEdIEs6AjZxsJXN6jS9MEikexhNa";
+    const url2 =
+      "https://discord.com/api/webhooks/1044323152852942918/oLZwW1QbqJrPgsYJCBBhQY_c3yOQg6x-ONK3JillstI_gSQNEHC0H0m0zR-SRY1s7thv";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: `A new transfer has been made on Tableland Rigs Collection. The sender is: ${event.returnValues.from} the receiver is ${event.returnValues.to} and the token number is ${event.returnValues.tokenId}`,
+      }),
+    };
+    const response = await fetch(url, options);
+    const response2 = await fetch(url2, options);
   });
 
 // usdcContract.events
